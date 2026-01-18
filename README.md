@@ -2,8 +2,6 @@
 
 This is a personal project I whipped up to keep my fucking download folder organized for once. It is specifically tailored for my Mac setup and isn't intended for widespread distribution as a polished package. I'm sharing the code in a raw, custom way. If it helps you solve a similar problem or inspires your own automation tools, that's great!
 
-## 🧠 The Problem: The Infinite Downloads Folder Syndrome
-
 I tend to hoard files, installers, and documents with the false promise that *"they will be useful in the future."* Surprise: they never are. The result is a massive cognitive load that affects both my productivity and my Mac's storage.
 
 This project is born from my own **"Mental Framework"** to hack digital hoarding:
@@ -11,6 +9,11 @@ This project is born from my own **"Mental Framework"** to hack digital hoarding
 1. **Identify the trash:** Recognizing single-use files (currently focusing on installers like `.dmg` or `.app`).
 2. **Reduce detachment friction:** Instead of deleting them immediately (which triggers that *"what if I need it later?"* anxiety), I move them to a transition zone.
 3. **Automate the habit:** I've realized that the cognitive cost and psychological resistance to deleting things are too high for me. I've accepted it. So, I prefer this script to act as my "organized self" and do the job for me automatically.
+
+
+<img width="2752" height="1536" alt="fucking-folder" src="https://github.com/user-attachments/assets/6161fb7b-aedf-48b2-8b62-6402e8da4df3" />
+
+
 
 ## 🚀 The Solution: Version 1.0
 
