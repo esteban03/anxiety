@@ -22,8 +22,5 @@
 
     <key>StandardErrorPath</key>
     <string>/tmp/me.steban.www.downloadcleaner.stderr.log</string>
-
-    <key>WorkingDirectory</key>
-    <string>/Users/{username}/Desktop/pro/learn/download-cleaner</string>
 </dict>
 </plist>
