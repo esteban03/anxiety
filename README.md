@@ -30,6 +30,7 @@ This is the first iteration of my cleaning assistant. It uses a **Watchdog** (fi
 
 - **Python 3.14+**
 - [**uv**](https://github.com/astral-sh/uv): An extremely fast Python package installer and resolver.
+- [**Typer**](https://typer.tiangolo.com/): A library for building CLI applications.
 - [**Watchdog**](https://python-watchdog.readthedocs.io/): A library to monitor filesystem events. It leverages native OS events to track folder changes in real-time, avoiding the overhead of constant polling.
 
 ## 📦 Installation
@@ -47,75 +48,36 @@ cd anxiety
 uv sync
 ```
 
-### 3. Configuration
+## 🚀 Usage
 
-Open `main.py` and ensure the `downloads_folder` variable points to your directory:
+`anxiety` is now a CLI powered by Typer. You can run it using `uv run anxiety`.
 
-```python
-downloads_folder = Path("~/Downloads").expanduser()
-```
-
-## ⚙️ Run as a Service (macOS)
-
-You can set this up as a background service using `launchd` so it runs automatically when you log in.
-
-### 1. Create the Launch Agent
-
-Create a file named `com.user.anxiety.plist` in `~/Library/LaunchAgents/`:
-
+### Monitor Downloads (Foreground)
+To start watching your Downloads folder in real-time immediately:
 ```bash
-touch ~/Library/LaunchAgents/com.user.anxiety.plist
+uv run anxiety watch
 ```
 
-### 2. Configure the Service
+### Background Service (Daemon)
+You can run the cleaner as a background service that starts automatically when you log in.
 
-Paste the following configuration into the file. **Important:** Replace `YOUR_USERNAME` and `/PATH/TO/PROJECT` with your actual system values.
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-    <key>Label</key>
-    <string>com.user.anxiety</string>
-
-    <key>ProgramArguments</key>
-    <array>
-        <!-- Path to uv executable -->
-        <string>/Users/YOUR_USERNAME/.local/bin/uv</string>
-        <string>run</string>
-        <!-- Absolute path to main.py -->
-        <string>/PATH/TO/PROJECT/anxiety/main.py</string>
-    </array>
-
-    <key>RunAtLoad</key>
-    <true/>
-
-    <key>KeepAlive</key>
-    <true/>
-
-    <key>StandardOutPath</key>
-    <string>/tmp/com.user.anxiety.stdout.log</string>
-
-    <key>StandardErrorPath</key>
-    <string>/tmp/com.user.anxiety.stderr.log</string>
-
-    <key>WorkingDirectory</key>
-    <string>/PATH/TO/PROJECT/anxiety</string>
-</dict>
-</plist>
-```
-
-### 3. Load and Start the Service
-
+**Start & Enable:**
 ```bash
-launchctl load ~/Library/LaunchAgents/com.user.anxiety.plist
+uv run anxiety init
 ```
+This command automatically:
+1. Generates the Launch Agent configuration.
+2. Installs it to `~/Library/LaunchAgents/me.steban.www.anxiety.plist`.
+3. **Starts the service immediately.**
 
-### 4. Monitoring
-
-Check the logs to see the magic happening:
-
+**Stop & Disable:**
 ```bash
-tail -f /tmp/com.user.anxiety.stdout.log
+uv run anxiety stop
+```
+This stops the background service and unloads it from the system.
+
+### Logs
+To verify the service is working or debug issues, check the logs:
+```bash
+tail -f /tmp/me.steban.www.anxiety.stdout.log
 ```
