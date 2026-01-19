@@ -45,16 +45,16 @@ def watch():
             should_be_deleted_folder.mkdir(exist_ok=True)
 
             for file in should_be_deleted:
-                target = str(should_be_deleted_folder) + "/" + file.name
+                target_folder_path = str(should_be_deleted_folder) + "/" + file.name
 
-                if Path(target).exists():
+                if Path(target_folder_path).exists():
                     random_num = random.randint(1, 1000)
-                    target = f"{should_be_deleted_folder}/{file.stem} {random_num}{file.suffix}"
+                    target_folder_path = f"{should_be_deleted_folder}/{file.stem} {random_num}{file.suffix}"
 
                 if file.exists():
-                    shutil.move(str(file), target)
+                    shutil.move(str(file), target_folder_path)
 
-                print("Target position: " + target)
+                print("Target position: " + target_folder_path)
 
             print(f"{len(should_be_deleted)} files should be deleted")
 
