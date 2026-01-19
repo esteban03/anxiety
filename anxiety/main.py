@@ -129,6 +129,8 @@ def status():
     except subprocess.CalledProcessError as e:
         if e.returncode == 113:
             typer.secho("Services is not running!", fg="red")
+        else:
+            raise e
 
 
 if __name__ == "__main__":
