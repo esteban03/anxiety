@@ -1,3 +1,5 @@
+> 🚧 **Note:** This project is still under development.
+
 # Hacking my Digital Hoarding, one file at a time
 
 This is a personal project I whipped up to keep my fucking download folder organized for once. It is specifically tailored for my Mac setup and isn't intended for widespread distribution as a polished package. I'm sharing the code in a raw, custom way. If it helps you solve a similar problem or inspires your own automation tools, that's great!
