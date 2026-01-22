@@ -75,10 +75,10 @@ class ShouldBeDeleted:
     def run(self) -> None:
         print("Running...")
         self._move_files()
-        # self._delete_files()
+        self._delete_files()
         print("Done!")
 
-    def _full_delete(self, file: Path) -> None:
+    def _delete(self, file: Path) -> None:
         if file.is_dir():
             shutil.rmtree(str(file.parent))
             return
@@ -89,14 +89,17 @@ class ShouldBeDeleted:
         if not self._should_be_deleted_folder.exists():
             return
 
-        files = self._should_be_deleted_folder.glob("*")
+        print("Deleting files...")
+
+        files = self._should_be_deleted_folder.iterdir()
 
         for file in files:
             created_date = datetime.fromtimestamp(file.stat().st_ctime)
 
-            if (created_date - datetime.now()) < Rules.max_time_before_to_delete:
+            if (datetime.now() - created_date) < Rules.max_time_before_to_delete:
+                print(f"Too new to delete [{created_date}] [{datetime.now() - created_date}] -> {file.name}")
                 continue
 
-            self._full_delete(file)
+            self._delete(file)
 
             print(f"Deleted file: {file.name}")
