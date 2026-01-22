@@ -1,15 +1,15 @@
-import random
 import shutil
 import time
 import getpass
 import subprocess
 import typer
 
-
 from pathlib import Path
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, DirCreatedEvent, FileCreatedEvent
+
+from anxiety.should_be_deleted import ShouldBeDeleted
 
 
 app = typer.Typer()
@@ -40,26 +40,8 @@ def watch():
             if src_path.parent.name != downloads_folder.name:
                 return
 
-            should_be_deleted: list[Path] = []
-            should_be_deleted.extend(src_path.parent.glob("*.app"))
-            should_be_deleted.extend(src_path.parent.glob("*.dmg"))
-
-            should_be_deleted_folder = Path(f"{downloads_folder}/{target_folder_name}")
-            should_be_deleted_folder.mkdir(exist_ok=True)
-
-            for file in should_be_deleted:
-                target_folder_path = str(should_be_deleted_folder) + "/" + file.name
-
-                if Path(target_folder_path).exists():
-                    random_num = random.randint(1, 1000)
-                    target_folder_path = f"{should_be_deleted_folder}/{file.stem} {random_num}{file.suffix}"
-
-                if file.exists():
-                    shutil.move(str(file), target_folder_path)
-
-                print("Target position: " + target_folder_path)
-
-            print(f"{len(should_be_deleted)} files should be deleted")
+            should_be_deleted = ShouldBeDeleted(src_path=event.src_path)
+            should_be_deleted.run()
 
     observer = Observer()
     observer.schedule(MyHandler(), downloads_folder, recursive=True)
