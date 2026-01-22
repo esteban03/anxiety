@@ -12,3 +12,8 @@ dependencies = [
 
 [project.scripts]
 anxiety = "anxiety.main:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+]
