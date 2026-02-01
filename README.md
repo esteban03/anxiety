@@ -19,14 +19,15 @@ This project is born from my own **"Mental Framework"** to hack digital hoarding
 
 ## 🚀 The Solution: Version 1.0
 
-This is the first iteration of my cleaning assistant. It uses a **Watchdog** (filesystem observer) to monitor the downloads folder in real-time and apply my framework rules.
+This is the first iteration of my cleaning assistant. It uses a **Watchdog** (filesystem observer) to monitor folders in real-time and apply my framework rules.
 
 ### How it works:
 
-- **Auto-Detection:** The script watches for any new item arriving in the folder.
-- **Smart Filter:** It processes ALL files in Downloads (except temporary files and the transition folder itself).
-- **Move, Don't Delete:** Files are moved to a `should-be-deleted` folder. This hacks the fear of loss, giving me a "grace period" before the final purge.
+- **Auto-Detection:** The script watches for any new item arriving in the configured folders.
+- **Smart Filter:** It processes files based on the active strategy (Downloads, Desktop, or both).
+- **Move, Don't Delete:** Files are moved to a transition zone. This hacks the fear of loss, giving me a "grace period" before the final purge.
 - **Duplicate Handling:** If I download the same installer multiple times, the script detects name collisions and assigns a random number to avoid errors and keep everything traceable.
+- **Dual Strategy Support:** Choose to monitor Downloads, Desktop, or both simultaneously.
 
 ## 📋 File Movement & Deletion Rules
 
@@ -78,23 +79,70 @@ uv sync
 
 `anxiety` is now a CLI powered by Typer. You can run it using `uv run anxiety`.
 
-### Monitor Downloads (Foreground)
-To start watching your Downloads folder in real-time immediately:
+### Available Strategies
+
+- **`nice_download` (`-s`):** Monitors the Downloads folder and moves files to a transition zone.
+- **`nice_desktop` (`-d`):** Monitors the Desktop folder and keeps it organized.
+
+### Monitor in Foreground
+
+To start watching folders in real-time immediately:
+
+**Watch both Downloads and Desktop (default):**
 ```bash
 uv run anxiety watch
 ```
 
-### Background Service (Daemon)
-You can run the cleaner as a background service that starts automatically when you log in.
+**Watch only Downloads:**
+```bash
+uv run anxiety watch --nice_download
+# or
+uv run anxiety watch -s
+```
 
-**Start & Enable:**
+**Watch only Desktop:**
+```bash
+uv run anxiety watch --nice_desktop
+# or
+uv run anxiety watch -d
+```
+
+**Watch both explicitly:**
+```bash
+uv run anxiety watch -s -d
+```
+
+### Background Service (Daemon)
+
+You can run the cleaner as a background service that starts automatically when you log in. Choose which strategies to enable:
+
+**Start & Enable (both strategies by default):**
 ```bash
 uv run anxiety init
 ```
+
+**Start with specific strategies:**
+```bash
+# Only Downloads
+uv run anxiety init --nice_download
+
+# Only Desktop
+uv run anxiety init --nice_desktop
+
+# Both explicitly
+uv run anxiety init -s -d
+```
+
 This command automatically:
-1. Generates the Launch Agent configuration.
+1. Generates the Launch Agent configuration with your selected strategies.
 2. Installs it to `~/Library/LaunchAgents/me.steban.www.anxiety.plist`.
 3. **Starts the service immediately.**
+
+**Check Status:**
+```bash
+uv run anxiety status
+```
+Shows whether the service is running and which strategies are active.
 
 **Stop & Disable:**
 ```bash
