@@ -7,9 +7,12 @@ def _create_scenery(fs):
     desktop = Path("~/Desktop").expanduser()
     desktop.mkdir(parents=True)
 
+    downloads = Path("~/Downloads").expanduser()
+    downloads.mkdir(parents=True)
+
 
 @pytest.fixture()
-def download() -> Path:
+def downloads() -> Path:
     return Path("~/Downloads").expanduser()
 
 

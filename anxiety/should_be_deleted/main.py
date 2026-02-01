@@ -17,11 +17,13 @@ class ShouldBeDeleted:
     _downloads_folder: Path
     _should_be_deleted_folder: Path
     _target_folder_name = "should-be-deleted"
+    _rules: Rules
 
     def __init__(self, src_path: str) -> None:
         self.path = Path(src_path)
         self._downloads_folder = Path("~/Downloads").expanduser()
         self._should_be_deleted_folder = self._downloads_folder / self._target_folder_name
+        self._rules = Rules()
 
     def _detect_files(self) -> list[Path]:
         files: list[Path] = [
