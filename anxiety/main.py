@@ -8,6 +8,7 @@ from pathlib import Path
 from watchdog.observers import Observer
 
 from anxiety.should_be_deleted.hanlder import DownloadFolderHandler
+from anxiety.nice_desk.handler import NiceDeskHandler
 
 
 app = typer.Typer()
@@ -21,9 +22,11 @@ def watch():
     Watch your Downloads folder for new files.
     """
     downloads_folder = Path("~/Downloads").expanduser()
+    desktop_folder = Path("~/Desktop").expanduser()
 
     observer = Observer()
     observer.schedule(DownloadFolderHandler(), downloads_folder, recursive=True)
+    observer.schedule(NiceDeskHandler(), desktop_folder, recursive=True)
     observer.start()
     try:
         while observer.is_alive():
