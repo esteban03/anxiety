@@ -17,3 +17,10 @@ anxiety = "anxiety.main:app"
 dev = [
     "pytest>=9.0.2",
 ]
+
+[tool.uv]
+package = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
