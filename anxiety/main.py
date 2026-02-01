@@ -23,7 +23,7 @@ def main(ctx: typer.Context):
     Hacking my Digital Hoarding, one file at a time.
     """
     if ctx.invoked_subcommand is None:
-        banner = """
+        banner = r"""
     ___                _      __       
    /   |  ____  _  __(_)__  / /___  __
   / /| | / __ \| |/_/ / _ \/ __/ / / /
