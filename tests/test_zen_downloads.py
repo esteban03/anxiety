@@ -11,7 +11,9 @@ def test_move_file_to_should_be_deleted(fs, downloads):
 
     assert not target_folder.exists()
 
-    created_file_datetime = arrow.now().shift(days=-(Rules.is_too_new.days + 1)).datetime
+    created_file_datetime = (
+        arrow.now().shift(days=-(Rules.is_too_new.days + 1)).datetime
+    )
 
     with freezegun.freeze_time(created_file_datetime):
         new_file = downloads / "new_file.txt"
@@ -24,14 +26,15 @@ def test_move_file_to_should_be_deleted(fs, downloads):
     assert not new_file.exists()
 
 
-
 def test_delete_file_from_should_be_deleted(fs, downloads):
     target_folder = downloads / "should-be-deleted"
     target_folder.mkdir()
 
     assert target_folder.exists()
 
-    created_file_datetime = arrow.now().shift(days=-(Rules.max_time_before_to_delete.days + 1)).datetime
+    created_file_datetime = (
+        arrow.now().shift(days=-(Rules.max_time_before_to_delete.days + 1)).datetime
+    )
 
     with freezegun.freeze_time(created_file_datetime):
         old_file: Path = target_folder / "old_file.txt"
@@ -47,6 +50,3 @@ def test_delete_file_from_should_be_deleted(fs, downloads):
 
     assert target_folder.exists()
     assert not old_file.exists()
-
-
-

@@ -8,7 +8,7 @@ from anxiety.nice_desk.main import NiceDesk
 
 
 def test_move_new_file(fs, desktop):
-    file = (desktop / "nice_file.txt")
+    file = desktop / "nice_file.txt"
     file.touch()
 
     assert file.exists()
@@ -36,10 +36,7 @@ def test_not_move_folder(fs, desktop):
     assert new_folder.exists()
 
 
-@pytest.mark.parametrize(
-    "pattern",
-    TEMPORARY_FILE_PATTERNS
-)
+@pytest.mark.parametrize("pattern", TEMPORARY_FILE_PATTERNS)
 def test_avoid_move_specific_patterns(fs, desktop, pattern):
     file_to_avoid: Path = desktop / f"any_{pattern}"
     file_to_avoid.touch()
