@@ -1,4 +1,5 @@
 import time
+from pathlib import Path
 
 from watchdog.events import FileSystemEventHandler, FileSystemEvent, DirCreatedEvent
 
@@ -11,3 +12,7 @@ class NiceDeskHandler(FileSystemEventHandler):
 
         nice_desk = NiceDesk(event.src_path)
         nice_desk.run()
+
+    @classmethod
+    def get_folder(cls) -> Path:
+        return Path("~/Desktop").expanduser()

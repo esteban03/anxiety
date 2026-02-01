@@ -17,16 +17,26 @@ command_name = "anxiety"
 plist_file_name = "me.steban.www.anxiety.plist"
 
 @app.command()
-def watch():
+def watch(
+    should_be_deleted: bool = typer.Option(False, "-s", "--nice_download", help="Keep your download folder nice."),
+    nice_desktop: bool = typer.Option(False, "-d", "--nice_desktop", help="Keep your desktop folder nice."),
+):
     """
     Watch your Downloads folder for new files.
     """
-    downloads_folder = Path("~/Downloads").expanduser()
-    desktop_folder = Path("~/Desktop").expanduser()
+
+    if not should_be_deleted and not nice_desktop:
+        should_be_deleted = True
+        nice_desktop = True
 
     observer = Observer()
-    observer.schedule(DownloadFolderHandler(), downloads_folder, recursive=True)
-    observer.schedule(NiceDeskHandler(), desktop_folder, recursive=True)
+
+    if should_be_deleted:
+        observer.schedule(DownloadFolderHandler(), DownloadFolderHandler.get_folder(), recursive=True)
+
+    if nice_desktop:
+        observer.schedule(NiceDeskHandler(), NiceDeskHandler.get_folder(), recursive=True)
+
     observer.start()
     try:
         while observer.is_alive():
