@@ -1,3 +1,5 @@
+[![Tests](https://github.com/esteban03/anxiety/actions/workflows/tests.yml/badge.svg)](https://github.com/esteban03/anxiety/actions/workflows/tests.yml)
+
 > 🚧 **Note:** This project is still under development.
 
 # Hacking my Digital Hoarding, one file at a time
