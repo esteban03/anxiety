@@ -15,6 +15,7 @@ anxiety = "anxiety.main:app"
 
 [dependency-groups]
 dev = [
+    "pyfakefs>=6.0.0",
     "pytest>=9.0.2",
 ]
 
