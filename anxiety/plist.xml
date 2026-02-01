@@ -8,7 +8,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>{command_path}</string>
-        <string>watch</string>
+        {program_arguments}
     </array>
 
     <key>RunAtLoad</key>

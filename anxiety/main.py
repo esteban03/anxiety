@@ -16,10 +16,15 @@ app = typer.Typer()
 command_name = "anxiety"
 plist_file_name = "me.steban.www.anxiety.plist"
 
+
 @app.command()
 def watch(
-    should_be_deleted: bool = typer.Option(False, "-s", "--nice_download", help="Keep your download folder nice."),
-    nice_desktop: bool = typer.Option(False, "-d", "--nice_desktop", help="Keep your desktop folder nice."),
+    should_be_deleted: bool = typer.Option(
+        False, "-s", "--nice_download", help="Keep your download folder nice."
+    ),
+    nice_desktop: bool = typer.Option(
+        False, "-d", "--nice_desktop", help="Keep your desktop folder nice."
+    ),
 ):
     """
     Watch your Downloads folder for new files.
@@ -32,10 +37,14 @@ def watch(
     observer = Observer()
 
     if should_be_deleted:
-        observer.schedule(DownloadFolderHandler(), DownloadFolderHandler.get_folder(), recursive=True)
+        observer.schedule(
+            DownloadFolderHandler(), DownloadFolderHandler.get_folder(), recursive=True
+        )
 
     if nice_desktop:
-        observer.schedule(NiceDeskHandler(), NiceDeskHandler.get_folder(), recursive=True)
+        observer.schedule(
+            NiceDeskHandler(), NiceDeskHandler.get_folder(), recursive=True
+        )
 
     observer.start()
     try:
@@ -45,23 +54,48 @@ def watch(
         observer.stop()
         observer.join()
 
+
 def _get_target_plist_file_path() -> Path:
-    return  Path(f"~/Library/LaunchAgents/{plist_file_name}").expanduser()
+    return Path(f"~/Library/LaunchAgents/{plist_file_name}").expanduser()
+
 
 @app.command()
-def init():
+def init(
+    nice_download: bool = typer.Option(
+        False, "-s", "--nice_download", help="Watch Downloads folder only."
+    ),
+    nice_desktop: bool = typer.Option(
+        False, "-d", "--nice_desktop", help="Watch Desktop folder only."
+    ),
+):
     """
     Run anxiety in the background.
     """
+
+    # Apply to strategies/mode if any strategy is passed by argument
+    if not nice_download and not nice_desktop:
+        nice_download = True
+        nice_desktop = True
+
+    # arguments for anxiety command for the plist file
+    program_args = ["<string>watch</string>"]
+    if nice_download:
+        program_args.append("<string>--nice_download</string>")
+    if nice_desktop:
+        program_args.append("<string>--nice_desktop</string>")
+
+    program_arguments_xml = "\n".join(program_args)
+
     root_path = Path(__file__).parent
 
     with open(root_path / "plist.xml", "r") as f:
         plist_content = f.read().format(
             username=getpass.getuser(),
             command_path=shutil.which(command_name),
+            program_arguments=program_arguments_xml,
         )
 
-    plist_file =_get_target_plist_file_path()
+    plist_file = _get_target_plist_file_path()
     plist_file.parent.mkdir(parents=True, exist_ok=True)
     plist_file.write_text(plist_content)
 
@@ -69,7 +103,7 @@ def init():
         ["launchctl", "load", str(plist_file)],
         check=True,
         capture_output=True,
-        text=True
+        text=True,
     )
 
     result.check_returncode()
@@ -85,7 +119,7 @@ def stop():
     result = subprocess.run(
         ["launchctl", "unload", str(_get_target_plist_file_path())],
         capture_output=True,
-        text=True
+        text=True,
     )
 
     result.check_returncode()
@@ -101,17 +135,34 @@ def status():
     process_name = plist_file_name.replace(".plist", "")
 
     result = subprocess.run(
-        ["launchctl", "list", process_name],
-        capture_output=True,
-        text=True
+        ["launchctl", "list", process_name], capture_output=True, text=True
     )
 
     try:
         result.check_returncode()
-        typer.secho("Service is running", fg="green")
+
+        plist_file = _get_target_plist_file_path()
+        strategies = []
+
+        if plist_file.exists():
+            with open(plist_file, "r") as f:
+                content = f.read()
+                if "--nice_download" in content or "nice_download" in content:
+                    strategies.append("nice_download")
+                if "--nice_desktop" in content or "nice_desktop" in content:
+                    strategies.append("nice_desktop")
+
+        if strategies:
+            typer.secho(
+                f"Service is running with strategies: {', '.join(strategies)}",
+                fg="green",
+            )
+        else:
+            typer.secho("Service is running", fg="green")
+
     except subprocess.CalledProcessError as e:
         if e.returncode == 113:
-            typer.secho("Services is not running!", fg="red")
+            typer.secho("Service is not running!", fg="red")
         else:
             raise e
 
