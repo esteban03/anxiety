@@ -1,6 +1,8 @@
 import shutil
 from pathlib import Path
 
+from anxiety.constants import TEMPORARY_FILE_PATTERNS
+
 
 class NiceDesk:
 
@@ -19,6 +21,9 @@ class NiceDesk:
             return True
 
         if path.is_dir():
+            return True
+
+        if any(t in path.name for t in TEMPORARY_FILE_PATTERNS):
             return True
 
         return False

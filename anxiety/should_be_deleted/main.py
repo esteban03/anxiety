@@ -3,21 +3,14 @@ import shutil
 from datetime import timedelta, datetime
 from pathlib import Path
 
+from anxiety.constants import TEMPORARY_FILE_PATTERNS
+
 
 class Rules:
     # less than 1 day is too new to move inside should_be_delete folder
     is_too_new = timedelta(days=1)
 
     max_time_before_to_delete = timedelta(weeks=1)
-
-    # Files that are currently being downloaded (temporary files)
-    temporary_patterns = {
-        ".com.google.Chrome",  # Chrome temporary downloads
-        ".tmp",  # Generic temp files
-        ".partial",  # Partial downloads
-        "~$",  # Office temporary files
-        ".crdownload",
-    }
 
 
 class ShouldBeDeleted:
@@ -44,7 +37,7 @@ class ShouldBeDeleted:
             return True
 
         # check if the file it's a temporary file used for a process like chrome download
-        if any(pattern in file.name for pattern in Rules.temporary_patterns):
+        if any(pattern in file.name for pattern in TEMPORARY_FILE_PATTERNS):
             print("Temporary file or folder skipped -> " + file.name)
             return True
 
