@@ -71,18 +71,16 @@ Both strategies skip files matching these patterns to avoid interfering with act
 
 ## 📦 Installation
 
-### 1. Clone the repository
+To install `anxiety` as a global tool using `uv` (recommended):
 
 ```bash
-git clone <repository-url>
-cd anxiety
+uv tool install git+https://github.com/esteban03/anxiety.git
 ```
 
-### 2. Install dependencies using `uv`
+This will make the `anxiety` command available anywhere in your terminal.
 
-```bash
-uv sync
-```
+> [!TIP]
+> If you want to contribute or develop, check the [Development Guide](DEVELOPMENT.md).
 
 ## 🚀 Usage
 
@@ -100,63 +98,56 @@ To start watching immediately:
 **Watch both (default):**
 
 ```bash
-uv run anxiety watch
+anxiety watch
 ```
 
 **Watch specific strategies:**
 
 ```bash
 # Only Downloads
-uv run anxiety watch -s
+anxiety watch -s
 
 # Only Desktop
-uv run anxiety watch -d
+anxiety watch -d
 ```
 
 ### Background Service (Daemon)
 
-You can run the cleaner as a background service that starts automatically when you log in. Choose which strategies to enable:
+You can run the cleaner as a background service that starts automatically when you log in.
 
 **Start & Enable (both strategies by default):**
 
 ```bash
-uv run anxiety init
+anxiety init
 ```
 
 **Start with specific strategies:**
 
 ```bash
 # Only Downloads
-uv run anxiety init --nice_download
+anxiety init --nice_download
 
 # Only Desktop
-uv run anxiety init --nice_desktop
-
-# Both explicitly
-uv run anxiety init -s -d
+anxiety init --nice_desktop
 ```
 
 This command automatically:
 
-1. Generates the Launch Agent configuration with your selected strategies.
+1. Generates the Launch Agent configuration.
 2. Installs it to `~/Library/LaunchAgents/me.steban.www.anxiety.plist`.
 3. **Starts the service immediately.**
 
 **Check Status:**
 
 ```bash
-uv run anxiety status
+anxiety status
 ```
-
-Shows whether the service is running and which strategies are active.
 
 **Stop & Disable:**
 
 ```bash
-uv run anxiety stop
+anxiety stop
 ```
-
-This stops the background service and unloads it from the system.
 
 ### Logs
 
