@@ -1,5 +1,4 @@
 import shutil
-import time
 import getpass
 import subprocess
 import typer
@@ -7,9 +6,8 @@ import typer
 from pathlib import Path
 
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler, DirCreatedEvent, FileCreatedEvent
 
-from anxiety.should_be_deleted import ShouldBeDeleted
+from anxiety.should_be_deleted.hanlder import DownloadFolderHandler
 
 
 app = typer.Typer()
@@ -23,19 +21,9 @@ def watch():
     Watch your Downloads folder for new files.
     """
     downloads_folder = Path("~/Downloads").expanduser()
-    target_folder_name = "should-be-deleted"
-
-    class MyHandler(FileSystemEventHandler):
-        def on_created(self, event: DirCreatedEvent | FileCreatedEvent) -> None:
-            print("New file created: ", event.src_path)
-
-            time.sleep(0.5)
-
-            should_be_deleted = ShouldBeDeleted(src_path=event.src_path)
-            should_be_deleted.run()
 
     observer = Observer()
-    observer.schedule(MyHandler(), downloads_folder, recursive=True)
+    observer.schedule(DownloadFolderHandler(), downloads_folder, recursive=True)
     observer.start()
     try:
         while observer.is_alive():
