@@ -1,5 +1,3 @@
-
-
 # Files that are currently being downloaded (temporary files)
 TEMPORARY_FILE_PATTERNS = {
     ".com.google.Chrome",  # Chrome temporary downloads

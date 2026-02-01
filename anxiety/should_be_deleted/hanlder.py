@@ -15,7 +15,6 @@ class DownloadFolderHandler(FileSystemEventHandler):
         should_be_deleted = ShouldBeDeleted(src_path=event.src_path)
         should_be_deleted.run()
 
-
     @classmethod
     def get_folder(cls) -> Path:
         return Path("~/Downloads").expanduser()

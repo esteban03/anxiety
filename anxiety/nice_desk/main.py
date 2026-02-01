@@ -5,7 +5,6 @@ from anxiety.constants import TEMPORARY_FILE_PATTERNS
 
 
 class NiceDesk:
-
     def __init__(self, src_path: str | Path) -> None:
         self.src_path = Path(src_path)
         self.download_folder = Path("~/Desktop").expanduser()

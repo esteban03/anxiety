@@ -22,14 +22,14 @@ class ShouldBeDeleted:
     def __init__(self, src_path: str) -> None:
         self.path = Path(src_path)
         self._downloads_folder = Path("~/Downloads").expanduser()
-        self._should_be_deleted_folder = self._downloads_folder / self._target_folder_name
+        self._should_be_deleted_folder = (
+            self._downloads_folder / self._target_folder_name
+        )
         self._rules = Rules()
 
     def _detect_files(self) -> list[Path]:
         files: list[Path] = [
-            file
-            for file in self._downloads_folder.iterdir()
-            if not self._skipped(file)
+            file for file in self._downloads_folder.iterdir() if not self._skipped(file)
         ]
         return files
 
@@ -45,7 +45,10 @@ class ShouldBeDeleted:
 
         creation_date = datetime.fromtimestamp(file.stat().st_ctime)
         if (datetime.now() - creation_date) < Rules.is_too_new:
-            print(f"Too new file [{creation_date}] [{datetime.now() - creation_date}] -> " + file.name)
+            print(
+                f"Too new file [{creation_date}] [{datetime.now() - creation_date}] -> "
+                + file.name
+            )
             return True
 
         return False
@@ -56,12 +59,13 @@ class ShouldBeDeleted:
         should_be_deleted = self._detect_files()
 
         for file in should_be_deleted:
-
             target_folder_path = self._should_be_deleted_folder / file.name
 
             if target_folder_path.exists():
                 random_num = random.randint(1, 1000)
-                target_folder_path = f"{target_folder_path.stem} {random_num}{file.suffix}"
+                target_folder_path = (
+                    f"{target_folder_path.stem} {random_num}{file.suffix}"
+                )
 
             if file.exists():
                 shutil.move(str(file), target_folder_path)
@@ -76,7 +80,6 @@ class ShouldBeDeleted:
         # of the Downloads folder, ignoring nested paths.
         if self.path.parent.name != self._downloads_folder.name:
             return
-
 
         print("Running...")
         self._move_files()
@@ -102,7 +105,9 @@ class ShouldBeDeleted:
             created_date = datetime.fromtimestamp(file.stat().st_ctime)
 
             if (datetime.now() - created_date) < Rules.max_time_before_to_delete:
-                print(f"Too new to delete [{created_date}] [{datetime.now() - created_date}] -> {file.name}")
+                print(
+                    f"Too new to delete [{created_date}] [{datetime.now() - created_date}] -> {file.name}"
+                )
                 continue
 
             self._delete(file)
