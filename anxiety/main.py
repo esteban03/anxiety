@@ -11,10 +11,36 @@ from anxiety.should_be_deleted.hanlder import DownloadFolderHandler
 from anxiety.nice_desk.handler import NiceDeskHandler
 
 
-app = typer.Typer()
+app = typer.Typer(help="Personal project to keep my download folder organized.")
 
 command_name = "anxiety"
 plist_file_name = "me.steban.www.anxiety.plist"
+
+
+@app.callback(invoke_without_command=True)
+def main(ctx: typer.Context):
+    """
+    Hacking my Digital Hoarding, one file at a time.
+    """
+    if ctx.invoked_subcommand is None:
+        banner = """
+    ___                _      __       
+   /   |  ____  _  __(_)__  / /___  __
+  / /| | / __ \| |/_/ / _ \/ __/ / / /
+ / ___ |/ / / />  </ /  __/ /_/ /_/ / 
+/_/  |_/_/ /_/_/|_/_/\___/\__/\__, /  
+                             /____/   
+        """
+        typer.secho(banner, fg="cyan", bold=True)
+        typer.secho("🚀 Hacking the Digital Hoarding, one file at a time.\n", fg="yellow", bold=True)
+        
+        motivation = (
+            "This project was born from the need to manage the cognitive load of a cluttered "
+            "Downloads and Desktop folder. It moves files to a 'transition zone' to reduce the "
+            "anxiety of immediate deletion, helping you maintain a zen-like workspace automatically."
+        )
+        typer.echo(motivation)
+        typer.echo("\nUse --help to see available commands.")
 
 
 @app.command()
