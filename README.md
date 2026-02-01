@@ -4,18 +4,15 @@
 
 This is a personal project I whipped up to keep my fucking download folder organized for once. It is specifically tailored for my Mac setup and isn't intended for widespread distribution as a polished package. I'm sharing the code in a raw, custom way. If it helps you solve a similar problem or inspires your own automation tools, that's great!
 
-I tend to hoard files, installers, and documents with the false promise that *"they will be useful in the future."* Surprise: they never are. The result is a massive cognitive load that affects both my productivity and my Mac's storage.
+I tend to hoard files, installers, and documents with the false promise that _"they will be useful in the future."_ Surprise: they never are. The result is a massive cognitive load that affects both my productivity and my Mac's storage.
 
 This project is born from my own **"Mental Framework"** to hack digital hoarding:
 
 1. **Identify the trash:** Recognizing single-use files (currently focusing on installers like `.dmg` or `.app`).
-2. **Reduce detachment friction:** Instead of deleting them immediately (which triggers that *"what if I need it later?"* anxiety), I move them to a transition zone.
+2. **Reduce detachment friction:** Instead of deleting them immediately (which triggers that _"what if I need it later?"_ anxiety), I move them to a transition zone.
 3. **Automate the habit:** I've realized that the cognitive cost and psychological resistance to deleting things are too high for me. I've accepted it. So, I prefer this script to act as my "organized self" and do the job for me automatically.
 
-
 <img width="2752" height="1536" alt="fucking-folder" src="https://github.com/user-attachments/assets/6161fb7b-aedf-48b2-8b62-6402e8da4df3" />
-
-
 
 ## 🚀 The Solution: Version 1.0
 
@@ -23,32 +20,42 @@ This is the first iteration of my cleaning assistant. It uses a **Watchdog** (fi
 
 ### How it works:
 
-- **Auto-Detection:** The script watches for any new item arriving in the configured folders.
-- **Smart Filter:** It processes files based on the active strategy (Downloads, Desktop, or both).
-- **Move, Don't Delete:** Files are moved to a transition zone. This hacks the fear of loss, giving me a "grace period" before the final purge.
-- **Duplicate Handling:** If I download the same installer multiple times, the script detects name collisions and assigns a random number to avoid errors and keep everything traceable.
-- **Dual Strategy Support:** Choose to monitor Downloads, Desktop, or both simultaneously.
+- **Auto-Detection:** Monitoring configured folders in real-time.
+- **Zen Download (Internal: `should-be-deleted`):** Tackles digital hoarding by moving files through a transition zone before deletion.
+- **Zen Desktop:** Keeps your Mac desktop pristine by filing away items instantly.
+- **Smart Filter:** Files are processed based on the active strategy (Downloads, Desktop, or both).
+- **Dual Strategy Support:** Both are active by default, though they can be enabled independently.
 
-## 📋 File Movement & Deletion Rules
+## 📋 Strategies & Rules
 
-The script follows a two-stage approach based on file metadata (`st_ctime` - creation time):
+The project operates under two distinct mental models to maintain digital health:
 
-### Stage 1: Movement to Transition Zone
-- **Waiting Period:** Files must remain in Downloads for at least **24 hours** before being moved
-- **Target Files:** ALL files in Downloads (excluding temporary files and the transition folder)
-- **Destination:** `~/Downloads/should-be-deleted/` folder
-- **⚠️ macOS Behavior:** When files are moved, macOS treats this as creating a new file, so the creation timestamp (`st_ctime`) resets to the move time
+### 1. Zen Download (Internal: `should-be-deleted`)
 
-### Stage 2: Automatic Deletion
-- **Grace Period:** Files in the transition zone are kept for **1 week** before deletion
-- **Timing Logic:** Due to the macOS timestamp reset, the actual deletion occurs 1 week after the file was moved (not 1 week after original download)
-- **Example Timeline:**
-  - Day 0: File downloaded to Downloads
-  - Day 1+: File moved to `should-be-deleted` (timestamp resets)
-  - Day 8+: File automatically deleted
+Designed to combat the anxiety of "what if I need this later?" and the self-deception that every installer is a treasure.
+
+- **Objective:** Maintain an organized Downloads folder by eliminating accumulated clutter.
+- **Movement Rule:** Files must stay in Downloads for at least **24 hours** before moving (the "cooling off" period).
+- **Transition Zone:** Files move to `~/Downloads/should-be-deleted/`.
+- **Final Purge:** After **1 week** in the transition zone, files are automatically deleted.
+- **Rigid Implementation:** This follows strict rules to prevent you from lying to yourself about a file's future utility.
+
+> [!IMPORTANT]
+> **macOS Behavior:** Moving files resets the creation timestamp (`st_ctime`). The 1-week grace period starts from the moment the file is moved to the transition zone.
+
+### 2. Zen Desktop
+
+The Mac desktop is beautiful when it's clear. This strategy ensures you always have that "fresh install" feeling.
+
+- **Objective:** Maintain a pristine, zen-like workspace.
+- **Action:** Any file arriving on the desktop is **immediately** moved into a subfolder named `Desktop` (`~/Desktop/Desktop`).
+- **File-Only Rule:** This strategy **does not move folders**. This allows you to keep specific, hand-picked project folders on your desktop while the "loose" file clutter disappears.
+- **Safety:** There is **no deletion** involved in this strategy. It just moves things out of sight until you need them.
 
 ### Temporary File Protection
-The script skips files matching these patterns to avoid interfering with active downloads:
+
+Both strategies skip files matching these patterns to avoid interfering with active tasks:
+
 - `.com.google.Chrome` (Chrome temporary downloads)
 - `.tmp`, `.partial`, `.crdownload` (partial downloads)
 - `~$` (Office temporary files)
@@ -56,9 +63,9 @@ The script skips files matching these patterns to avoid interfering with active 
 ## 🛠️ Technologies
 
 - **Python 3.14+**
-- [**uv**](https://github.com/astral-sh/uv): An extremely fast Python package installer and resolver.
-- [**Typer**](https://typer.tiangolo.com/): A library for building CLI applications.
-- [**Watchdog**](https://python-watchdog.readthedocs.io/): A library to monitor filesystem events. It leverages native OS events to track folder changes in real-time, avoiding the overhead of constant polling.
+- [**uv**](https://github.com/astral-sh/uv): Fast Python package management.
+- [**Typer**](https://typer.tiangolo.com/): Powering the CLI interface.
+- [**Watchdog**](https://python-watchdog.readthedocs.io/): Real-time filesystem observation.
 
 ## 📦 Installation
 
@@ -77,39 +84,31 @@ uv sync
 
 ## 🚀 Usage
 
-`anxiety` is now a CLI powered by Typer. You can run it using `uv run anxiety`.
+By default, **both strategies are active**. You can run `anxiety` as a foreground observer or a background service.
 
-### Available Strategies
+### Available Strategy Flags
 
-- **`nice_download` (`-s`):** Monitors the Downloads folder and moves files to a transition zone.
-- **`nice_desktop` (`-d`):** Monitors the Desktop folder and keeps it organized.
+- **`--nice_download` / `-s`:** Enables Zen Download.
+- **`--nice_desktop` / `-d`:** Enables Zen Desktop.
 
 ### Monitor in Foreground
 
-To start watching folders in real-time immediately:
+To start watching immediately:
 
-**Watch both Downloads and Desktop (default):**
+**Watch both (default):**
+
 ```bash
 uv run anxiety watch
 ```
 
-**Watch only Downloads:**
+**Watch specific strategies:**
+
 ```bash
-uv run anxiety watch --nice_download
-# or
+# Only Downloads
 uv run anxiety watch -s
-```
 
-**Watch only Desktop:**
-```bash
-uv run anxiety watch --nice_desktop
-# or
+# Only Desktop
 uv run anxiety watch -d
-```
-
-**Watch both explicitly:**
-```bash
-uv run anxiety watch -s -d
 ```
 
 ### Background Service (Daemon)
@@ -117,11 +116,13 @@ uv run anxiety watch -s -d
 You can run the cleaner as a background service that starts automatically when you log in. Choose which strategies to enable:
 
 **Start & Enable (both strategies by default):**
+
 ```bash
 uv run anxiety init
 ```
 
 **Start with specific strategies:**
+
 ```bash
 # Only Downloads
 uv run anxiety init --nice_download
@@ -134,24 +135,31 @@ uv run anxiety init -s -d
 ```
 
 This command automatically:
+
 1. Generates the Launch Agent configuration with your selected strategies.
 2. Installs it to `~/Library/LaunchAgents/me.steban.www.anxiety.plist`.
 3. **Starts the service immediately.**
 
 **Check Status:**
+
 ```bash
 uv run anxiety status
 ```
+
 Shows whether the service is running and which strategies are active.
 
 **Stop & Disable:**
+
 ```bash
 uv run anxiety stop
 ```
+
 This stops the background service and unloads it from the system.
 
 ### Logs
+
 To verify the service is working or debug issues, check the logs:
+
 ```bash
 tail -f /tmp/me.steban.www.anxiety.stdout.log
 ```
